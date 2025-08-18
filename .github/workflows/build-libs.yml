@@ -16,8 +16,8 @@ jobs:
     steps:
       - name: Install loongarch64-linux-gnu cross-compiler
         run: |
-          apt-get update
-          apt-get install -y build-essential \
+          sudo apt-get update
+          sudo apt-get install -y build-essential \
                              curl \
                              python3 \
                              g++-14-loongarch64-linux-gnu \
@@ -31,7 +31,7 @@ jobs:
                                   CXX=loongarch64-linux-gnu-g++-14"
           wget -qO - https://raw.githubusercontent.com/Loongson-Cloud-Community/libsndfile-binaries/refs/heads/dev/linux-build-add-loong64-support.patch | patch -p1
           ./linux_build.sh
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: lib-linux-loongarch64
           path: "libsndfile_loongarch64.so"
