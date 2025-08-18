@@ -51,5 +51,5 @@ index bb53b7c..fa515de 100755
  
 -cp $SNDFILENAME/src/.libs/libsndfile.so libsndfile.so
 -chmod -x libsndfile.so
-+cp $SNDFILENAME/src/.libs/libsndfile.so libsndfile_$(uname -m).so
-+chmod -x libsndfile_$(uname -m).so
++cp $SNDFILENAME/src/.libs/libsndfile.so libsndfile_loongarch64.so
++chmod -x libsndfile_loongarch64.so
