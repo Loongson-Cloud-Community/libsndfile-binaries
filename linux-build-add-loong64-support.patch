@@ -1,0 +1,55 @@
+diff --git a/linux_build.sh b/linux_build.sh
+index bb53b7c..fa515de 100755
+--- a/linux_build.sh
++++ b/linux_build.sh
+@@ -19,12 +19,17 @@ set -e
+ # into the libsndfile.so later:
+ export CFLAGS="-fPIC"
+ export LDFLAGS="-fPIC"
+-
++# update config.sub and config.guess
++update_config() {
++     wget -O config.sub https://sources.debian.org/data/main/libw/libwebp/1.5.0-0.1/config.sub
++     wget -O config.guess https://sources.debian.org/data/main/libw/libwebp/1.5.0-0.1/config.guess
++}
+ # libogg
+ 
+ curl -LO https://downloads.xiph.org/releases/ogg/libogg-$OGGVERSION.tar.gz
+ tar xvf libogg-$OGGVERSION.tar.gz
+ cd libogg-$OGGVERSION
++update_config
+ ./configure --disable-shared $CONFIGURE_FLAGS
+ make -j$JOBS
+ cd ..
+@@ -37,6 +42,7 @@ export OGG_LIBS="-L$OGG_LIBDIR -logg"
+ curl -LO https://downloads.xiph.org/releases/vorbis/libvorbis-$VORBISVERSION.tar.gz
+ tar xvf libvorbis-$VORBISVERSION.tar.gz
+ cd libvorbis-$VORBISVERSION
++update_config
+ ./configure --disable-shared --with-ogg-includes=$OGG_INCDIR --with-ogg-libraries=$OGG_LIBDIR $CONFIGURE_FLAGS
+ make -j$JOBS
+ cd ..
+@@ -55,6 +61,7 @@ cd ..
+ curl -LO https://downloads.xiph.org/releases/opus/opus-$OPUSVERSION.tar.gz
+ tar xvf opus-$OPUSVERSION.tar.gz
+ cd opus-$OPUSVERSION
++update_config
+ ./configure --disable-shared $CONFIGURE_FLAGS
+ make -j$JOBS
+ cd ..
+@@ -73,6 +80,7 @@ cd ..
+ curl -LO https://sourceforge.net/projects/lame/files/lame/$LAMEVERSION/lame-$LAMEVERSION.tar.gz
+ tar xvf lame-$LAMEVERSION.tar.gz
+ cd lame-$LAMEVERSION
++update_config
+ ./configure --enable-static --disable-shared $CONFIGURE_FLAGS
+ make -j$JOBS
+ cd ..
+@@ -112,5 +120,5 @@ cd $SNDFILENAME
+ make -j$JOBS
+ cd ..
+ 
+-cp $SNDFILENAME/src/.libs/libsndfile.so libsndfile.so
+-chmod -x libsndfile.so
++cp $SNDFILENAME/src/.libs/libsndfile.so libsndfile_$(uname -m).so
++chmod -x libsndfile_$(uname -m).so
