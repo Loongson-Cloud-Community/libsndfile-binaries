@@ -35,12 +35,13 @@ jobs:
           fi
 
       - name: Configure git for github-actions[bot]
-        #    if: steps.check_changes.outputs.changed == 'true'
+        if: steps.check_changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: build
+      - name: install loongarch64-linux-gnu cross-compiler
+        if: steps.check_changes.outputs.changed == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential \
@@ -49,6 +50,7 @@ jobs:
                              g++-14-loongarch64-linux-gnu \
                              pkg-config
       - name: Compile library
+        if: steps.check_changes.outputs.changed == 'true'
         run: |
           export CONFIGURE_FLAGS="--host=loongarch64-linux-gnu \
                                   --build=x86_64-linux-gnu \
@@ -58,6 +60,7 @@ jobs:
           mv libsndfile.so libsndfile_loongarch64.so
 
       - name: Push changes
+        if: steps.check_changes.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
