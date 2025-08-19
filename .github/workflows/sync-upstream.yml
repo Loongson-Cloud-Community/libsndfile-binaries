@@ -1,0 +1,65 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Add upstream
+        run: |
+          git remote add upstream https://github.com/bastibe/libsndfile-binaries.git
+          git fetch upstream
+      
+      - name: Pull upstream changes
+        run: |
+          git checkout master
+          git merge upstream/master --no-edit || true
+
+      - name: Check if there are changes
+        id: check_changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure git for github-actions[bot]
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: build
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential \
+                             curl \
+                             python3 \
+                             g++-14-loongarch64-linux-gnu \
+                             pkg-config
+      - name: Compile library
+        run: |
+          export CONFIGURE_FLAGS="--host=loongarch64-linux-gnu \
+                                  --build=x86_64-linux-gnu \
+                                  CC=loongarch64-linux-gnu-gcc-14 \
+                                  CXX=loongarch64-linux-gnu-g++-14"
+          ./linux_build.sh
+          mv libsndfile.so libsndfile_loongarch64.so
+
+      - name: Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:master
+
