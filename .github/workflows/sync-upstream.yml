@@ -35,7 +35,7 @@ jobs:
           fi
 
       - name: Configure git for github-actions[bot]
-        if: steps.check_changes.outputs.changed == 'true'
+        #    if: steps.check_changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
