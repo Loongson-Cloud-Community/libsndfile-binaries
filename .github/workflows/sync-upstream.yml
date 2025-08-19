@@ -61,5 +61,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          UPSTREAM_SHA=$(git rev-parse upstream/master)
+          git add -A
+          git commit -m "ci: sync with upstream at ${UPSTREAM_SHA}"
           git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:master
+
 
