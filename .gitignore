@@ -6,7 +6,7 @@
 flac*
 lame*
 libogg*
-libsndfile*
+libsndfile-*
 libvorbis*
 mpg123*
 opus*
