@@ -1,0 +1,12 @@
+*.log
+
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+flac*
+lame*
+libogg*
+libsndfile*
+libvorbis*
+mpg123*
+opus*
